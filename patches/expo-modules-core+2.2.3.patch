@@ -1,0 +1,17 @@
+diff --git a/node_modules/expo-modules-core/android/build.gradle b/node_modules/expo-modules-core/android/build.gradle
+index 05c45a6..900d354 100644
+--- a/node_modules/expo-modules-core/android/build.gradle
++++ b/node_modules/expo-modules-core/android/build.gradle
+@@ -118,11 +118,7 @@ android {
+ 
+   if (KOTLIN_MAJOR_VERSION < 2) {
+     composeOptions {
+-      def versionsMap = [
+-        "1.9.24": "1.5.14",
+-        "1.9.25": "1.5.15",
+-      ]
+-      kotlinCompilerExtensionVersion = versionsMap[kotlinVersion()]
++      kotlinCompilerExtensionVersion = "1.5.15"
+     }
+   }
+ 
