@@ -141,7 +141,7 @@ export default function SettingsScreen() {
           >
             <View style={styles.itemLeft}>
               <Ionicons name="bug-outline" size={22} color={COLORS.warning} />
-              <Text style={[styles.itemLabel, { color: colors.text }]}>Probar Notificación (5s)</Text>
+              <Text style={[styles.itemLabel, { color: colors.text }]}>Probar Notificación (15s)</Text>
             </View>
             <Ionicons name="flask-outline" size={20} color={colors.textTertiary} />
           </TouchableOpacity>

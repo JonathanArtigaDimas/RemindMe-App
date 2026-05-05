@@ -16,6 +16,7 @@ class AudioService {
         playsInSilentModeIOS: true,
         shouldDuckAndroid: true,
         playThroughEarpieceAndroid: false,
+        staysActiveInBackground: true, // Esto es la clave para Samsung
       });
     } catch (e) {
       console.warn('AudioService configure error:', e);
@@ -29,7 +30,7 @@ class AudioService {
 
       const { sound } = await Audio.Sound.createAsync(
         { uri },
-        { volume, shouldPlay: true }
+        { volume, shouldPlay: true, isLooping: true }
       );
       this.currentSound = sound;
 

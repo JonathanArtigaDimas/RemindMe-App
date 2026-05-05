@@ -15,7 +15,7 @@ import { ReminderCard } from '../../src/components/reminder/ReminderCard';
 import { EmptyState } from '../../src/components/common/EmptyState';
 import { Reminder } from '../../src/types';
 import { CATEGORY_INFO } from '../../src/theme/colors';
-import { formatTime } from '../../src/utils/dateHelpers';
+import { formatTime, toDate } from '../../src/utils/dateHelpers';
 
 export default function CalendarScreen() {
   const router = useRouter();
@@ -33,7 +33,7 @@ export default function CalendarScreen() {
   // Build marked dates
   const markedDates: Record<string, any> = {};
   reminders.forEach((r) => {
-    const day = r.datetime.split('T')[0];
+    const day = toDate(r.datetime).toISOString().split('T')[0];
     const catInfo = CATEGORY_INFO.find((c) => c.id === r.category);
     const dots = markedDates[day]?.dots || [];
     const dotColor = r.color || catInfo?.color || COLORS.primary;

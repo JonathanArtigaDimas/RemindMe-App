@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { Platform, Alert, ToastAndroid } from 'react-native';
 import Constants from 'expo-constants';
 import { Reminder } from '../types';
 
@@ -44,15 +44,18 @@ class NotificationService {
     if (!Notifications) return;
 
     try {
-      await Notifications.setNotificationChannelAsync('reminders', {
-        name: 'Recordatorios',
-        importance: Notifications.AndroidImportance.HIGH,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C',
+      // Usamos un nuevo ID de canal para forzar que Samsung aplique los cambios de Banner (Heads-up)
+      await Notifications.setNotificationChannelAsync('reminder-urgent-v2', {
+        name: '⏰ Avisos Urgentes',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 500, 200, 500],
         enableVibration: true,
+        showBadge: true,
+        lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+        sound: 'default',
       });
     } catch (e) {
-      console.warn('Error setting up notification channel:', e);
+      console.warn('Error setting up alarm channel:', e);
     }
   }
 
@@ -61,29 +64,40 @@ class NotificationService {
     if (!Notifications) return [];
 
     try {
-      const date = new Date(reminder.datetime);
-      // Add 5 second buffer to avoid immediate firing on creation
-      if (date.getTime() < Date.now() + 5000) return [];
+      const targetTime = typeof reminder.datetime === 'number' ? reminder.datetime : new Date(reminder.datetime).getTime();
+      const now = Date.now();
+      let secondsToWait = Math.floor((targetTime - now) / 1000);
+      
+      const { Alert } = require('react-native');
+      const nowStr = new Date(now).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+      const targetStr = new Date(targetTime).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: true });
 
-      const ids: string[] = [];
+      if (secondsToWait < 5) return []; // Silently ignore very close times
 
       const id = await Notifications.scheduleNotificationAsync({
         content: {
-          title: reminder.title,
-          body: reminder.description || 'Tienes un recordatorio pendiente.',
-          data: { reminderId: reminder.id },
-          categoryIdentifier: 'reminder-actions',
-          color: reminder.color,
+          title: '⏰ RECORDATORIO: ' + reminder.title,
+          body: reminder.description || 'Toca para abrir RemindMe',
           priority: Notifications.AndroidNotificationPriority.MAX,
           sound: true,
+          vibrate: [0, 500, 200, 500],
+          categoryIdentifier: 'reminder-actions',
+          data: { reminderId: reminder.id },
         },
         trigger: {
-          seconds: Math.max(1, Math.floor((date.getTime() - Date.now()) / 1000)),
-          channelId: 'reminders',
-        },
+          type: 'date',
+          date: targetTime,
+          channelId: 'reminder-urgent-v2',
+        } as any,
       });
-      ids.push(id);
-      return ids;
+
+      // Mensaje sutil en lugar de alerta invasiva
+      if (Platform.OS === 'android') {
+        const timeStr = new Date(targetTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        ToastAndroid.show(`Recordatorio creado para las ${timeStr}`, ToastAndroid.SHORT);
+      }
+
+      return [id];
     } catch (e) {
       console.warn('Error scheduling notification:', e);
       return [];
@@ -159,11 +173,10 @@ class NotificationService {
 
     try {
       const { permissions } = await Notifications.getPermissionsAsync();
-      // On some Android versions, we need to check if we can schedule exact alarms
-      // Expo 52+ handles this via permissions check
-      return true; 
+      const canDoExact = (permissions as any)?.['canScheduleExactAlarms'] ?? true;
+      return canDoExact;
     } catch (e) {
-      return false;
+      return true;
     }
   }
 
@@ -207,11 +220,11 @@ class NotificationService {
           sound: true,
         },
         trigger: {
-          seconds: 5,
-          channelId: 'reminders',
+          seconds: 15,
+          channelId: 'reminders-v15',
         },
       });
-      alert('Se ha programado una prueba para dentro de 5 segundos. Por favor, bloquea el teléfono o sal de la app.');
+      alert('Se ha programado una prueba para dentro de 15 segundos. Por favor, bloquea el teléfono o sal de la app.');
     } catch (e) {
       alert('Error al programar: ' + e);
     }

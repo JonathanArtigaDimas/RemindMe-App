@@ -24,36 +24,68 @@ interface ReminderAlertProps {
 const { height } = Dimensions.get('window');
 
 export function ReminderAlert({ visible, reminder, onDismiss }: ReminderAlertProps) {
-  const [scaleAnim] = useState(new Animated.Value(0.8));
+  const [scaleAnim] = useState(new Animated.Value(0.5));
   const [opacityAnim] = useState(new Animated.Value(0));
+  const [pulseAnim] = useState(new Animated.Value(1));
 
   useEffect(() => {
     if (visible) {
+      // Entrance animation
       Animated.parallel([
         Animated.spring(scaleAnim, {
           toValue: 1,
-          friction: 8,
+          friction: 6,
+          tension: 40,
           useNativeDriver: true,
         }),
         Animated.timing(opacityAnim, {
           toValue: 1,
-          duration: 300,
+          duration: 400,
           useNativeDriver: true,
         }),
       ]).start();
+
+      // Pulsing loop
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 1.1,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
     } else {
-      scaleAnim.setValue(0.8);
+      scaleAnim.setValue(0.5);
       opacityAnim.setValue(0);
+      pulseAnim.setValue(1);
     }
   }, [visible]);
 
   if (!reminder) return null;
 
+  const category = CATEGORY_INFO.find(c => c.id === reminder.category);
+
   return (
-    <Modal visible={visible} transparent animationType="none">
+    <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
-        {/* Blur fallback */}
-        <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.6)' }]} />
+        <Animated.View 
+          style={[
+            styles.fullBg, 
+            { 
+              backgroundColor: reminder.color || COLORS.primary,
+              opacity: opacityAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 0.98],
+              }),
+            }
+          ]} 
+        />
         
         <Animated.View 
           style={[
@@ -61,51 +93,49 @@ export function ReminderAlert({ visible, reminder, onDismiss }: ReminderAlertPro
             { 
               transform: [{ scale: scaleAnim }],
               opacity: opacityAnim,
-              backgroundColor: reminder.color || COLORS.primary,
             }
           ]}
         >
           <View style={styles.content}>
-            <View style={styles.iconCircle}>
-              <Text style={styles.emoji}>
-                {CATEGORY_INFO.find(c => c.id === reminder.category)?.emoji || '🔔'}
-              </Text>
-            </View>
+            <Animated.View style={[styles.iconContainer, { transform: [{ scale: pulseAnim }] }]}>
+              <View style={styles.iconCircle}>
+                <Text style={styles.emoji}>{category?.emoji || '🔔'}</Text>
+              </View>
+              <View style={styles.ring} />
+            </Animated.View>
             
+            <Text style={styles.urgentText}>¡RECORDATORIO!</Text>
             <Text style={styles.title}>{reminder.title}</Text>
             
             {reminder.description ? (
               <Text style={styles.description}>{reminder.description}</Text>
             ) : null}
             
-            <View style={styles.timeBadge}>
-              <Ionicons name="time" size={16} color="rgba(255,255,255,0.8)" />
-              <Text style={styles.timeText}>¡Es la hora!</Text>
+            <View style={styles.actions}>
+              <TouchableOpacity 
+                activeOpacity={0.8}
+                onPress={onDismiss} 
+                style={[styles.mainButton, { backgroundColor: '#FFF' }]}
+              >
+                <Ionicons name="checkmark-done" size={28} color={reminder.color || COLORS.primary} />
+                <Text style={[styles.buttonText, { color: reminder.color || COLORS.primary }]}>Hecho</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                activeOpacity={0.7}
+                onPress={async () => {
+                  const newDate = new Date(Date.now() + 10 * 60000).toISOString();
+                  useReminderStore.getState().updateReminder(reminder.id, { datetime: newDate });
+                  const ids = await notificationService.scheduleReminder({ ...reminder, datetime: newDate });
+                  useReminderStore.getState().setNotificationIds(reminder.id, ids);
+                  onDismiss();
+                }} 
+                style={styles.snoozeButton}
+              >
+                <Ionicons name="notifications-off" size={24} color="#FFF" />
+                <Text style={styles.snoozeText}>Posponer 10 min</Text>
+              </TouchableOpacity>
             </View>
-
-            <TouchableOpacity 
-              activeOpacity={0.8}
-              onPress={onDismiss} 
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>Completar</Text>
-              <Ionicons name="checkmark-circle" size={24} color={reminder.color || COLORS.primary} />
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              activeOpacity={0.7}
-              onPress={async () => {
-                const newDate = new Date(Date.now() + 10 * 60000).toISOString();
-                useReminderStore.getState().updateReminder(reminder.id, { datetime: newDate });
-                const ids = await notificationService.scheduleReminder({ ...reminder, datetime: newDate });
-                useReminderStore.getState().setNotificationIds(reminder.id, ids);
-                onDismiss();
-              }} 
-              style={[styles.button, styles.snoozeButton]}
-            >
-              <Text style={[styles.buttonText, { color: '#FFF' }]}>Posponer 10 min</Text>
-              <Ionicons name="time" size={24} color="#FFF" />
-            </TouchableOpacity>
           </View>
         </Animated.View>
       </View>
@@ -118,81 +148,105 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: SPACING.xl,
+    padding: SPACING.lg,
+  },
+  fullBg: {
+    ...StyleSheet.absoluteFillObject,
   },
   container: {
     width: '100%',
+    maxWidth: 400,
+    backgroundColor: 'rgba(255,255,255,0.15)',
     borderRadius: RADIUS.xxl,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
     overflow: 'hidden',
-    elevation: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 15,
   },
   content: {
     padding: SPACING.xl,
     alignItems: 'center',
   },
+  iconContainer: {
+    position: 'relative',
+    marginBottom: SPACING.xl,
+  },
   iconCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: SPACING.lg,
+    zIndex: 2,
+    elevation: 10,
+  },
+  ring: {
+    position: 'absolute',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.5)',
+    top: -10,
+    left: -10,
   },
   emoji: {
-    fontSize: 40,
+    fontSize: 50,
+  },
+  urgentText: {
+    fontSize: TYPOGRAPHY.sizes.sm,
+    fontWeight: TYPOGRAPHY.weights.extrabold,
+    color: 'rgba(255,255,255,0.8)',
+    letterSpacing: 4,
+    marginBottom: SPACING.xs,
   },
   title: {
-    fontSize: TYPOGRAPHY.sizes.xl,
-    fontWeight: TYPOGRAPHY.weights.bold,
+    fontSize: 32,
+    fontWeight: TYPOGRAPHY.weights.extrabold,
     color: '#FFF',
     textAlign: 'center',
     marginBottom: SPACING.sm,
   },
   description: {
-    fontSize: TYPOGRAPHY.sizes.base,
+    fontSize: TYPOGRAPHY.sizes.lg,
     color: 'rgba(255,255,255,0.9)',
     textAlign: 'center',
-    marginBottom: SPACING.lg,
-  },
-  timeBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.xs,
-    borderRadius: RADIUS.full,
     marginBottom: SPACING.xl,
+    fontStyle: 'italic',
   },
-  timeText: {
-    color: '#FFF',
-    fontWeight: TYPOGRAPHY.weights.semibold,
-    marginLeft: SPACING.xs,
-    fontSize: TYPOGRAPHY.sizes.sm,
-  },
-  button: {
-    backgroundColor: '#FFF',
+  actions: {
     width: '100%',
-    paddingVertical: SPACING.md,
-    borderRadius: RADIUS.lg,
+    gap: SPACING.md,
+  },
+  mainButton: {
+    width: '100%',
+    height: 65,
+    borderRadius: RADIUS.xl,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: SPACING.sm,
+    elevation: 5,
   },
   buttonText: {
-    fontSize: TYPOGRAPHY.sizes.lg,
+    fontSize: 20,
     fontWeight: TYPOGRAPHY.weights.bold,
-    color: '#333',
   },
   snoozeButton: {
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    marginTop: SPACING.md,
+    width: '100%',
+    height: 55,
+    borderRadius: RADIUS.xl,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: SPACING.sm,
+    backgroundColor: 'rgba(0,0,0,0.2)',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.3)',
+  },
+  snoozeText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: TYPOGRAPHY.weights.semibold,
   },
 });

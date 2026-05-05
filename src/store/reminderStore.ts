@@ -2,8 +2,9 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import uuid from 'react-native-uuid';
 import { Reminder, ReminderFormData } from '../types';
-import { isToday, isWithinInterval, addDays, startOfDay, endOfDay, parseISO } from 'date-fns';
+import { isToday, isWithinInterval, addDays, startOfDay, endOfDay } from 'date-fns';
 import { fileStorage } from '../services/storageService';
+import { toDate } from '../utils/dateHelpers';
 
 interface ReminderState {
   reminders: Reminder[];
@@ -67,7 +68,7 @@ export const useReminderStore = create<ReminderState>()(
       
       getTodayReminders: () => {
         const { reminders } = get();
-        return reminders.filter((r) => isToday(parseISO(r.datetime)));
+        return reminders.filter((r) => isToday(toDate(r.datetime)));
       },
       
       getUpcomingReminders: (days) => {
@@ -75,14 +76,17 @@ export const useReminderStore = create<ReminderState>()(
         const start = startOfDay(addDays(new Date(), 1));
         const end = endOfDay(addDays(new Date(), days));
         return reminders.filter((r) => {
-          const date = parseISO(r.datetime);
+          const date = toDate(r.datetime);
           return isWithinInterval(date, { start, end });
         });
       },
 
       getByDate: (dateStr) => {
         const { reminders } = get();
-        return reminders.filter((r) => r.datetime.startsWith(dateStr));
+        return reminders.filter((r) => {
+          const dStr = typeof r.datetime === 'number' ? new Date(r.datetime).toISOString() : r.datetime;
+          return dStr.startsWith(dateStr);
+        });
       },
     }),
     {

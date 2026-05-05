@@ -12,9 +12,12 @@ import { reminderMonitor } from '../src/services/reminderMonitor';
 import { ReminderAlert } from '../src/components/ui/ReminderAlert';
 import { Reminder } from '../src/types';
 import { useSettingsStore } from '../src/store/settingsStore';
+import { useReminderStore } from '../src/store/reminderStore';
 import { useThemeColors } from '../src/theme';
+import { registerBackgroundTasks } from '../src/services/backgroundTask';
 
 import * as Notifications from 'expo-notifications';
+import { useKeepAwake } from 'expo-keep-awake';
 
 // Configure how notifications should be handled when the app is running
 Notifications.setNotificationHandler({
@@ -37,6 +40,7 @@ LogBox.ignoreLogs([
 ]);
 
 export default function RootLayout() {
+  useKeepAwake();
   const router = useRouter();
   const { settings } = useSettingsStore();
   const colors = useThemeColors(settings.theme);
@@ -46,6 +50,9 @@ export default function RootLayout() {
   const [alertVisible, setAlertVisible] = React.useState(false);
 
   useEffect(() => {
+    // Register background tasks
+    registerBackgroundTasks();
+
     // Setup notifications
     notificationService.requestPermissions().then((granted) => {
       if (granted) {
@@ -55,7 +62,11 @@ export default function RootLayout() {
     });
 
     // Setup audio
-    audioService.configure();
+    audioService.configure().then(() => {
+      // Truco del Latido Silencioso: Reproducimos un audio invisible para que Samsung no congele la app
+      // Usamos el sonido de aviso pero con volumen 0
+      audioService.playSound('https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3', 0);
+    });
 
     // Start foreground monitor with custom UI
     reminderMonitor.start((reminder) => {
@@ -63,9 +74,15 @@ export default function RootLayout() {
       setAlertVisible(true);
     });
 
-    // Handle notification press → navigate to reminder
+    // Handle notification press → show the striking alert
     const sub = notificationService.setupResponseHandler((reminderId) => {
-      router.push(`/reminder/${reminderId}`);
+      const reminder = useReminderStore.getState().getReminderById(reminderId);
+      if (reminder) {
+        setActiveReminder(reminder);
+        setAlertVisible(true);
+      } else {
+        router.push(`/reminder/${reminderId}`);
+      }
     });
 
     return () => {

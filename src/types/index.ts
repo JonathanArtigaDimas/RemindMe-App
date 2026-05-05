@@ -13,7 +13,7 @@ export interface Reminder {
   id: string;
   title: string;
   description?: string;
-  datetime: string;
+  datetime: number | string;
   category: ReminderCategory;
   color: string;
   soundId: string;

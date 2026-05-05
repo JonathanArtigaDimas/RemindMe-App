@@ -55,7 +55,21 @@ export function ReminderForm({ initialData, onSubmit, submitLabel }: ReminderFor
   const onDateChange = (event: any, selectedDate?: Date) => {
     setShowDatePicker(false);
     if (selectedDate) {
-      setDatetime(selectedDate);
+      // Manual sync: take hours and minutes from picker and apply to a fresh local Date
+      const now = new Date();
+      const syncedDate = new Date();
+      syncedDate.setHours(selectedDate.getHours());
+      syncedDate.setMinutes(selectedDate.getMinutes());
+      // No reseteamos segundos para que sea exacto desde 'ahora'
+      syncedDate.setSeconds(now.getSeconds());
+      syncedDate.setMilliseconds(0);
+      
+      // If the selected time has already passed today, assume they mean tomorrow
+      if (syncedDate.getTime() < now.getTime()) {
+        syncedDate.setDate(syncedDate.getDate() + 1);
+      }
+      
+      setDatetime(syncedDate);
     }
   };
 
@@ -78,7 +92,7 @@ export function ReminderForm({ initialData, onSubmit, submitLabel }: ReminderFor
     onSubmit({
       title,
       description,
-      datetime: datetime.toISOString(),
+      datetime: datetime.getTime(),
       category,
       color,
       soundId,

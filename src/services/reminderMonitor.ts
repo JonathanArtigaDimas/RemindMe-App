@@ -4,6 +4,7 @@ import { audioService } from './audioService';
 import { useSettingsStore } from '../store/settingsStore';
 import { BUILT_IN_SOUNDS } from '../constants/sounds';
 import { Reminder } from '../types';
+import { notificationService } from './notificationService';
 
 class ReminderMonitor {
   private interval: NodeJS.Timeout | null = null;
@@ -35,20 +36,19 @@ class ReminderMonitor {
     
     const dueReminders = store.reminders.filter(r => {
       if (!r.isActive || r.isCompleted || this.notifiedIds.has(r.id)) return false;
-      const reminderDate = new Date(r.datetime);
+      const reminderTime = typeof r.datetime === 'number' ? r.datetime : new Date(r.datetime).getTime();
       const nowTime = now.getTime();
-      const reminderTime = reminderDate.getTime();
       
-      // Reach the time? (within a 1-minute window to avoid missing it)
       const isDue = reminderTime <= nowTime;
       const isTooOld = (nowTime - reminderTime) > 60000;
 
       if (isDue && !isTooOld) {
-        // Protect against immediate trigger on creation
         const createdDate = new Date(r.createdAt);
-        const wasJustCreated = (nowTime - createdDate.getTime()) < 5000;
-        // Only trigger if it wasn't just created OR if the target time is definitely in the past relative to creation
-        return !wasJustCreated || (reminderTime < createdDate.getTime() - 1000);
+        const wasJustCreated = (nowTime - createdDate.getTime()) < 10000;
+        
+        console.log(`[Monitor] Checking "${r.title}": isDue=${isDue}, wasJustCreated=${wasJustCreated}`);
+
+        return !wasJustCreated || (reminderTime < createdDate.getTime() - 2000);
       }
       return false;
     });
@@ -74,6 +74,13 @@ class ReminderMonitor {
     if (this.onTrigger) {
       this.onTrigger(reminder);
     }
+
+    // 4. Force System Notification (Samsung Bypass)
+    // We send a 0-second notification so it shows NOW
+    await notificationService.scheduleReminder({
+      ...reminder,
+      id: `manual-${reminder.id}-${Date.now()}` // Unique ID to avoid being blocked by shield
+    });
   }
 }
 
