@@ -16,7 +16,7 @@ interface ReminderCardProps {
 
 export function ReminderCard({ reminder, onPress, onComplete, onDelete }: ReminderCardProps) {
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
   const catInfo = CATEGORY_INFO.find((c) => c.id === reminder.category);
 
   return (
@@ -55,7 +55,7 @@ export function ReminderCard({ reminder, onPress, onComplete, onDelete }: Remind
             <Text
               style={[
                 styles.title,
-                { color: colors.text },
+                { color: colors.textOnSurface },
                 reminder.isCompleted && styles.strikethrough,
               ]}
               numberOfLines={1}
@@ -72,7 +72,7 @@ export function ReminderCard({ reminder, onPress, onComplete, onDelete }: Remind
               <Text style={[styles.metaText, { color: colors.textSecondary }]}>
                 {catInfo?.emoji} {catInfo?.label}
               </Text>
-              <Text style={[styles.metaText, { color: COLORS.primary }]}>
+              <Text style={[styles.metaText, { color: colors.textOnSurface }]}>
                 {'  '}🕐 {formatTime(reminder.datetime)}
               </Text>
             </View>

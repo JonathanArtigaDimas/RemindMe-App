@@ -11,7 +11,7 @@ interface EmptyStateProps {
 
 export function EmptyState({ emoji = '📭', title, subtitle }: EmptyStateProps) {
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
   return (
     <View style={styles.container}>
       <Text style={styles.emoji}>{emoji}</Text>

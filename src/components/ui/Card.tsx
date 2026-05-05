@@ -13,7 +13,7 @@ interface CardProps {
 
 export function Card({ children, style, onPress, accentColor, noPadding }: CardProps) {
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
 
   const content = (
     <View
@@ -51,7 +51,7 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ title, right }: SectionHeaderProps) {
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
   return (
     <View style={styles.sectionRow}>
       <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{title}</Text>

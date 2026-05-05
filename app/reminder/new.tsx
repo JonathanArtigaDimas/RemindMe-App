@@ -13,7 +13,7 @@ import { ReminderFormData } from '../../src/types';
 export default function NewReminderScreen() {
   const router = useRouter();
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
   const { addReminder, setNotificationIds } = useReminderStore();
 
   const handleSubmit = async (data: ReminderFormData) => {

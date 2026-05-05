@@ -39,7 +39,7 @@ export function Button({
   fullWidth,
 }: ButtonProps) {
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
 
   const handlePress = async () => {
     if (settings.hapticFeedback) {

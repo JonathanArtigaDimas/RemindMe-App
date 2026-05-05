@@ -19,7 +19,7 @@ import * as Haptics from 'expo-haptics';
 export default function HomeScreen() {
   const router = useRouter();
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
   const {
     reminders, getTodayReminders, getUpcomingReminders,
     toggleComplete, deleteReminder, setNotificationIds,
@@ -72,7 +72,7 @@ export default function HomeScreen() {
           </Text>
           <Text style={[styles.title, { color: colors.text }]}>Mis Recordatorios</Text>
         </View>
-        <View style={styles.headerBadge}>
+        <View style={[styles.headerBadge, { backgroundColor: colors.primary }]}>
           <Text style={styles.headerBadgeText}>{reminders.length}</Text>
         </View>
       </View>
@@ -111,7 +111,7 @@ export default function HomeScreen() {
 
       {/* FAB */}
       <TouchableOpacity
-        style={styles.fab}
+        style={[styles.fab, { backgroundColor: colors.primary, shadowColor: colors.primary }]}
         onPress={() => router.push('/reminder/new')}
         activeOpacity={0.85}
       >
@@ -134,7 +134,6 @@ const styles = StyleSheet.create({
   greeting: { fontSize: TYPOGRAPHY.sizes.sm, marginBottom: 2 },
   title: { fontSize: TYPOGRAPHY.sizes.xl, fontWeight: TYPOGRAPHY.weights.extrabold },
   headerBadge: {
-    backgroundColor: COLORS.primary,
     borderRadius: RADIUS.full,
     width: 40,
     height: 40,
@@ -158,11 +157,9 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: COLORS.primary,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 8,
-    shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 12,

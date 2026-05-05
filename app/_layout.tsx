@@ -43,8 +43,8 @@ export default function RootLayout() {
   useKeepAwake();
   const router = useRouter();
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
-  const isDark = settings.theme === 'dark' || settings.theme === 'system';
+  const colors = useThemeColors(settings.themeId);
+  const isDark = colors.isDark;
 
   const [activeReminder, setActiveReminder] = React.useState<Reminder | null>(null);
   const [alertVisible, setAlertVisible] = React.useState(false);

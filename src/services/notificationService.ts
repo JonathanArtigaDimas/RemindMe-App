@@ -221,10 +221,12 @@ class NotificationService {
         },
         trigger: {
           seconds: 15,
-          channelId: 'reminders-v15',
+          channelId: 'reminder-urgent-v2',
         },
       });
-      alert('Se ha programado una prueba para dentro de 15 segundos. Por favor, bloquea el teléfono o sal de la app.');
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Prueba programada (15s). Sal de la app para escuchar.', ToastAndroid.LONG);
+      }
     } catch (e) {
       alert('Error al programar: ' + e);
     }

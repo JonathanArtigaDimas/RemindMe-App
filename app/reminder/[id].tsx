@@ -14,7 +14,7 @@ export default function EditReminderScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
   const { getReminderById, updateReminder, deleteReminder, setNotificationIds } = useReminderStore();
 
   const reminder = getReminderById(id);

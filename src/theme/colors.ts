@@ -65,10 +65,10 @@ export const CATEGORIES = {
 export const DEFAULT_COLORS = COLORS.palette;
 
 export const CATEGORY_INFO = [
-  { id: CATEGORIES.PERSONAL as ReminderCategory, label: 'Personal', emoji: '👤', color: COLORS.categories.personal },
-  { id: CATEGORIES.WORK as ReminderCategory, label: 'Trabajo', emoji: '💼', color: COLORS.categories.work },
-  { id: CATEGORIES.HEALTH as ReminderCategory, label: 'Salud', emoji: '❤️', color: COLORS.categories.health },
-  { id: CATEGORIES.FINANCE as ReminderCategory, label: 'Finanzas', emoji: '💰', color: COLORS.categories.finance },
-  { id: CATEGORIES.FAMILY as ReminderCategory, label: 'Familia', emoji: '👨‍👩‍👧', color: COLORS.categories.family },
-  { id: CATEGORIES.OTHER as ReminderCategory, label: 'Otro', emoji: '📌', color: COLORS.categories.other },
+  { id: CATEGORIES.PERSONAL as ReminderCategory, label: 'Personal', emoji: '👤', color: COLORS.categories.personal, icon: 'person-outline' },
+  { id: CATEGORIES.WORK as ReminderCategory, label: 'Trabajo', emoji: '💼', color: COLORS.categories.work, icon: 'briefcase-outline' },
+  { id: CATEGORIES.HEALTH as ReminderCategory, label: 'Salud', emoji: '❤️', color: COLORS.categories.health, icon: 'heart-outline' },
+  { id: CATEGORIES.FINANCE as ReminderCategory, label: 'Finanzas', emoji: '💰', color: COLORS.categories.finance, icon: 'cash-outline' },
+  { id: CATEGORIES.FAMILY as ReminderCategory, label: 'Familia', emoji: '👨‍👩‍👧', color: COLORS.categories.family, icon: 'people-outline' },
+  { id: CATEGORIES.OTHER as ReminderCategory, label: 'Otro', emoji: '📌', color: COLORS.categories.other, icon: 'bookmark-outline' },
 ];

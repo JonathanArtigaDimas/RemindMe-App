@@ -1,6 +1,7 @@
 export type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly' | 'custom';
 export type ReminderCategory = 'personal' | 'work' | 'health' | 'finance' | 'family' | 'other';
 export type Theme = 'light' | 'dark' | 'system';
+export type ThemeID = 'onyx' | 'arctic' | 'solar' | 'cyber' | 'ocean' | 'midnight' | 'glass' | 'sakura' | 'coffee' | 'noir';
 
 export interface RecurrenceConfig {
   type: RecurrenceType;
@@ -38,6 +39,7 @@ export interface Sound {
 
 export interface UserSettings {
   theme: Theme;
+  themeId: ThemeID;
   defaultSoundId: string;
   defaultCategory: ReminderCategory;
   defaultColor: string;

@@ -17,7 +17,7 @@ interface SoundPickerProps {
 
 export function SoundPicker({ value, onChange }: SoundPickerProps) {
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
   const { getAllSounds, addSound } = useSoundStore();
 
   const [playing, setPlaying] = useState<string | null>(null);
@@ -121,7 +121,7 @@ export function SoundPicker({ value, onChange }: SoundPickerProps) {
             ]}
           >
             <Text style={styles.soundEmoji}>{sound.emoji}</Text>
-            <Text style={[styles.soundName, { color: colors.text }]} numberOfLines={1}>
+            <Text style={[styles.soundName, { color: colors.textOnSurface }]} numberOfLines={1}>
               {sound.name}
             </Text>
             {sound.isRecorded && (
@@ -137,10 +137,10 @@ export function SoundPicker({ value, onChange }: SoundPickerProps) {
               <Ionicons
                 name={playing === sound.id ? 'stop-circle' : 'play-circle'}
                 size={24}
-                color={sound.uri ? COLORS.primary : colors.border}
+                color={sound.uri ? colors.textOnSurface : colors.textTertiary}
               />
             </TouchableOpacity>
-            {sel && <Ionicons name="checkmark-circle" size={20} color={COLORS.primary} style={styles.checkmark} />}
+            {sel && <Ionicons name="checkmark-circle" size={20} color={colors.textOnSurface} style={styles.checkmark} />}
           </TouchableOpacity>
         );
       })}

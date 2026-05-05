@@ -7,7 +7,7 @@ import { useReminderStore } from '../../src/store/reminderStore';
 
 export default function TabLayout() {
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
   const { getTodayReminders } = useReminderStore();
   const todayCount = getTodayReminders().filter((r) => !r.isCompleted).length;
 

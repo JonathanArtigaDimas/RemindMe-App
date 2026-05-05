@@ -14,7 +14,7 @@ interface CategorySelectorProps {
 
 export function CategorySelector({ value, onChange }: CategorySelectorProps) {
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.catScroll}>
       {CATEGORY_INFO.map((cat) => {
@@ -35,7 +35,7 @@ export function CategorySelector({ value, onChange }: CategorySelectorProps) {
             <Text
               style={[
                 styles.catLabel,
-                { color: selected ? '#fff' : colors.text },
+                { color: selected ? colors.textOnSurface : colors.text },
               ]}
             >
               {cat.label}
@@ -88,7 +88,7 @@ interface RecurrenceSelectorProps {
 
 export function RecurrenceSelector({ value, onChange }: RecurrenceSelectorProps) {
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
 
   const setType = (type: RecurrenceType) => onChange({ ...value, type });
   const toggleDay = (day: number) => {
@@ -114,7 +114,7 @@ export function RecurrenceSelector({ value, onChange }: RecurrenceSelectorProps)
                 },
               ]}
             >
-              <Text style={[styles.recLabel, { color: sel ? '#fff' : colors.text }]}>
+              <Text style={[styles.recLabel, { color: sel ? colors.textOnSurface : colors.text }]}>
                 {opt.label}
               </Text>
             </TouchableOpacity>

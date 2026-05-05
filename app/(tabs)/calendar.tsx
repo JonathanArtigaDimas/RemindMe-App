@@ -20,7 +20,7 @@ import { formatTime, toDate } from '../../src/utils/dateHelpers';
 export default function CalendarScreen() {
   const router = useRouter();
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
   const { reminders, getByDate, toggleComplete, deleteReminder } = useReminderStore();
 
   const [selectedDay, setSelectedDay] = useState<string>(
@@ -129,7 +129,7 @@ export default function CalendarScreen() {
           <View style={[styles.modalSheet, { backgroundColor: colors.card }]}>
             <View style={styles.sheetHandle} />
             <View style={styles.sheetHeader}>
-              <Text style={[styles.sheetTitle, { color: colors.text }]}>
+              <Text style={[styles.sheetTitle, { color: colors.textOnSurface }]}>
                 {selectedDay === todayStr ? '📅 Hoy' : selectedDay}
               </Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>

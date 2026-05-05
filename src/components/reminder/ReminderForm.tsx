@@ -26,7 +26,7 @@ interface ReminderFormProps {
 
 export function ReminderForm({ initialData, onSubmit, submitLabel }: ReminderFormProps) {
   const { settings } = useSettingsStore();
-  const colors = useThemeColors(settings.theme);
+  const colors = useThemeColors(settings.themeId);
 
   const getDefaultDate = () => {
     const d = new Date();
