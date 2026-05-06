@@ -243,7 +243,7 @@ export default function SettingsScreen() {
 
         <View style={styles.footer}>
           <Text style={[styles.version, { color: colors.textSecondary }, fontStyle]}>RemindMe v1.0.3</Text>
-          <Text style={[styles.version, { color: colors.textSecondary, fontWeight: 'bold', fontSize: 13 }]}>Lic. Mylene Dánae Castro de Artiga ♥️</Text>
+          <Text style={[styles.version, { color: colors.textSecondary, fontWeight: 'bold', fontSize: 13 }]}>⚖️ Lic. Mylene Dánae Castro de Artiga ♥️</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
