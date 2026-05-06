@@ -27,7 +27,11 @@
         "android.permission.MODIFY_AUDIO_SETTINGS",
         "android.permission.READ_MEDIA_AUDIO",
         "android.permission.SCHEDULE_EXACT_ALARM",
-        "android.permission.USE_EXACT_ALARM"
+        "android.permission.USE_EXACT_ALARM",
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
       ]
     },
     "plugins": [
@@ -44,6 +48,13 @@
       "@react-native-community/datetimepicker",
       "expo-router",
       "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Permitir a RemindMe acceder a tus fotos para adjuntarlas en notas.",
+          "cameraPermission": "Permitir a RemindMe usar la cámara para capturar fotos en tus notas."
+        }
+      ],
       [
         "expo-build-properties",
         {

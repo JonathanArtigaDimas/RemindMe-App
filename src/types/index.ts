@@ -11,6 +11,9 @@ export interface Note {
   isPinned: boolean;
   color?: string;
   tags?: string[];
+  imageUri?: string;       // persistent local path
+  audioUri?: string;       // persistent local path
+  audioTranscript?: string; // from Whisper
   createdAt: string;
   updatedAt: string;
 }
