@@ -12,13 +12,22 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { SPACING, RADIUS, useThemeColors, THEMES } from '../../src/theme';
+import { SPACING, RADIUS, useThemeColors, THEMES, FONTS, TYPOGRAPHY } from '../../src/theme';
 import { useSettingsStore } from '../../src/store/settingsStore';
 import { useReminderStore } from '../../src/store/reminderStore';
 import { Card, SectionHeader } from '../../src/components/ui/Card';
-import { ThemeID } from '../../src/types';
+import { ThemeID, FontFamily } from '../../src/types';
 import { useRouter } from 'expo-router';
 import { notificationService } from '../../src/services/notificationService';
+
+const FONT_OPTIONS: { id: FontFamily; name: string; preview: string }[] = [
+  { id: 'system', name: 'Sistema', preview: 'Default Sans' },
+  { id: 'inter', name: 'Inter Pro', preview: 'Moderno y legible' },
+  { id: 'outfit', name: 'Outfit', preview: 'Geométrico suave' },
+  { id: 'montserrat', name: 'Montserrat', preview: 'Clásico moderno' },
+  { id: 'playfair', name: 'Playfair Display', preview: 'Elegante y serif' },
+  { id: 'ubuntu', name: 'Ubuntu Pro', preview: 'Estilo distintivo' },
+];
 
 const { width } = Dimensions.get('window');
 
@@ -37,7 +46,10 @@ const THEME_OPTIONS: { id: ThemeID; name: string; icon: string; description: str
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const { settings, setThemeId, setHapticFeedback, setShowCompleted, resetSettings } = useSettingsStore();
+  const { 
+    settings, setThemeId, setHapticFeedback, 
+    setShowCompleted, resetSettings, setFontFamily 
+  } = useSettingsStore();
   const { clearCompleted, reminders } = useReminderStore();
   const colors = useThemeColors(settings.themeId);
 
@@ -52,14 +64,17 @@ export default function SettingsScreen() {
     );
   };
 
+  const fontStyle = { fontFamily: TYPOGRAPHY.getFontFamily(settings.fontFamily) };
+  const fontBold = { fontFamily: TYPOGRAPHY.getFontFamily(settings.fontFamily, 'bold') };
+
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>🎨 Personalización</Text>
+        <Text style={[styles.title, { color: colors.text }, fontBold]}>🎨 Personalización</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <SectionHeader title="Temas Premium" />
+        <SectionHeader title="Temas Premium" fontStyle={fontBold} />
         <ScrollView 
           horizontal 
           showsHorizontalScrollIndicator={false} 
@@ -97,19 +112,71 @@ export default function SettingsScreen() {
           })}
         </ScrollView>
 
-        <SectionHeader title="Sonidos de Notificación" />
+        <SectionHeader title="Tipografía Premium" fontStyle={fontBold} />
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          contentContainerStyle={styles.themesContainer}
+        >
+          {FONT_OPTIONS.map((font) => {
+            const isSelected = settings.fontFamily === font.id;
+            const fontName = TYPOGRAPHY.getFontFamily(font.id);
+            const fontBoldLocal = TYPOGRAPHY.getFontFamily(font.id, 'bold');
+            
+            return (
+              <TouchableOpacity
+                key={font.id}
+                style={[
+                  styles.themeCard,
+                  { 
+                    backgroundColor: colors.surface,
+                    borderColor: isSelected ? colors.primary : colors.border,
+                    borderWidth: isSelected ? 2 : 1,
+                    width: 140,
+                  }
+                ]}
+                onPress={() => setFontFamily(font.id)}
+              >
+                <View style={[styles.themeIcon, { backgroundColor: isSelected ? colors.primary : colors.textTertiary }]}>
+                  <Text style={{ color: '#FFF', fontSize: 18, fontWeight: 'bold', fontFamily: fontBoldLocal }}>Aa</Text>
+                </View>
+                <Text style={[styles.themeName, { color: colors.text, fontFamily: fontBoldLocal }]}>{font.name}</Text>
+                <Text style={[styles.themeDesc, { color: colors.textSecondary, fontSize: 12, fontFamily: fontName }]}>{font.preview}</Text>
+                {isSelected && (
+                  <View style={[styles.selectedBadge, { backgroundColor: colors.primary }]}>
+                    <Ionicons name="checkmark" size={14} color="#FFF" />
+                  </View>
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+
+        <SectionHeader title="Sonidos de Notificación" fontStyle={fontBold} />
         <Card noPadding>
-          {['🔔 Clásico', '🎵 Melodía', '✨ Aviso', '🎺 Trompeta'].map((sound, index) => {
+          {[
+            { emoji: '🔔', label: 'Clásico' },
+            { emoji: '🎵', label: 'Melodía' },
+            { emoji: '✨', label: 'Aviso' },
+            { emoji: '🎺', label: 'Trompeta' }
+          ].map((sound, index) => {
             const isSelected = index === 0; // Por ahora seleccionamos el primero
             return (
-              <React.Fragment key={sound}>
+              <React.Fragment key={sound.label}>
                 <TouchableOpacity style={styles.listItem} onPress={() => {
                   notificationService.testNotification();
-                  ToastAndroid.show(`Prueba de "${sound}" enviada`, ToastAndroid.SHORT);
+                  ToastAndroid.show(`Prueba de "${sound.label}" enviada`, ToastAndroid.SHORT);
                 }}>
                   <View style={styles.itemLeft}>
                     <Ionicons name="musical-note-outline" size={22} color={colors.textOnSurface} />
-                    <Text style={[styles.itemLabel, { color: colors.textOnSurface }]}>{sound}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Text style={[styles.itemLabel, { color: colors.textOnSurface, marginRight: 8 }]}>
+                        {sound.emoji}
+                      </Text>
+                      <Text style={[styles.itemLabel, { color: colors.textOnSurface }, fontStyle]}>
+                        {sound.label}
+                      </Text>
+                    </View>
                   </View>
                   {isSelected && <Ionicons name="checkmark" size={20} color={colors.textOnSurface} />}
                 </TouchableOpacity>
@@ -124,7 +191,7 @@ export default function SettingsScreen() {
           >
             <View style={styles.itemLeft}>
               <Ionicons name="mic-circle-outline" size={22} color={colors.textOnSurface} />
-              <Text style={[styles.itemLabel, { color: colors.textOnSurface, fontWeight: 'bold' }]}>
+              <Text style={[styles.itemLabel, { color: colors.textOnSurface, fontWeight: 'bold' }, fontBold]}>
                 Biblioteca y Grabadora de Voz
               </Text>
             </View>
@@ -132,12 +199,12 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </Card>
 
-        <SectionHeader title="Ajustes de Sistema" />
+        <SectionHeader title="Ajustes de Sistema" fontStyle={fontBold} />
         <Card noPadding>
           <View style={styles.listItem}>
             <View style={styles.itemLeft}>
               <Ionicons name="pulse-outline" size={22} color={colors.primary} />
-              <Text style={[styles.itemLabel, { color: colors.text }]}>Vibración táctil</Text>
+              <Text style={[styles.itemLabel, { color: colors.text }, fontStyle]}>Vibración táctil</Text>
             </View>
             <Switch
               value={settings.hapticFeedback}
@@ -147,7 +214,7 @@ export default function SettingsScreen() {
           </View>
         </Card>
 
-        <SectionHeader title="Mantenimiento" />
+        <SectionHeader title="Mantenimiento" fontStyle={fontBold} />
         <Card noPadding>
           <TouchableOpacity
             style={styles.listItem}
@@ -159,7 +226,7 @@ export default function SettingsScreen() {
           >
             <View style={styles.itemLeft}>
               <Ionicons name="trash-outline" size={22} color={colors.error} />
-              <Text style={[styles.itemLabel, { color: colors.error }]}>Limpiar completados</Text>
+              <Text style={[styles.itemLabel, { color: colors.error }, fontStyle]}>Limpiar completados</Text>
             </View>
           </TouchableOpacity>
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
@@ -169,13 +236,13 @@ export default function SettingsScreen() {
           >
             <View style={styles.itemLeft}>
               <Ionicons name="refresh-outline" size={22} color={colors.textSecondary} />
-              <Text style={[styles.itemLabel, { color: colors.textSecondary }]}>Restablecer todo</Text>
+              <Text style={[styles.itemLabel, { color: colors.textSecondary }, fontStyle]}>Restablecer todo</Text>
             </View>
           </TouchableOpacity>
         </Card>
 
         <View style={styles.footer}>
-          <Text style={[styles.version, { color: colors.textSecondary }]}>RemindMe Premium v1.0.34</Text>
+          <Text style={[styles.version, { color: colors.textSecondary }, fontStyle]}>RemindMe Premium v1.0.34</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -1,7 +1,19 @@
 export type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly' | 'custom';
 export type ReminderCategory = 'personal' | 'work' | 'health' | 'finance' | 'family' | 'other';
 export type Theme = 'light' | 'dark' | 'system';
-export type ThemeID = 'onyx' | 'arctic' | 'solar' | 'cyber' | 'ocean' | 'midnight' | 'glass' | 'sakura' | 'coffee' | 'noir';
+export type ThemeID = 'onyx' | 'arctic' | 'solar' | 'cyber' | 'ocean' | 'midnight' | 'glass' | 'sakura' | 'coffee_milk' | 'noir';
+export type FontFamily = 'system' | 'inter' | 'playfair' | 'montserrat' | 'outfit' | 'ubuntu';
+
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  isPinned: boolean;
+  color?: string;
+  tags?: string[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface RecurrenceConfig {
   type: RecurrenceType;
@@ -40,6 +52,7 @@ export interface Sound {
 export interface UserSettings {
   theme: Theme;
   themeId: ThemeID;
+  fontFamily: FontFamily;
   defaultSoundId: string;
   defaultCategory: ReminderCategory;
   defaultColor: string;

@@ -10,6 +10,11 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@expo-google-fonts/inter": "^0.4.2",
+    "@expo-google-fonts/montserrat": "^0.4.2",
+    "@expo-google-fonts/outfit": "^0.4.3",
+    "@expo-google-fonts/playfair-display": "^0.4.2",
+    "@expo-google-fonts/ubuntu": "^0.4.1",
     "@expo/vector-icons": "~14.0.4",
     "@gorhom/bottom-sheet": "^5.2.10",
     "@react-native-async-storage/async-storage": "1.23.1",

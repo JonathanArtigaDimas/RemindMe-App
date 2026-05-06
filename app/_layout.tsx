@@ -18,6 +18,37 @@ import { registerBackgroundTasks } from '../src/services/backgroundTask';
 
 import * as Notifications from 'expo-notifications';
 import { useKeepAwake } from 'expo-keep-awake';
+import * as SplashScreen from 'expo-splash-screen';
+import {
+  useFonts,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_700Bold,
+  Inter_400Regular_Italic,
+} from '@expo-google-fonts/inter';
+import {
+  PlayfairDisplay_400Regular,
+  PlayfairDisplay_700Bold,
+  PlayfairDisplay_400Regular_Italic,
+} from '@expo-google-fonts/playfair-display';
+import {
+  Montserrat_400Regular,
+  Montserrat_500Medium,
+  Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
+import {
+  Outfit_400Regular,
+  Outfit_500Medium,
+  Outfit_700Bold,
+} from '@expo-google-fonts/outfit';
+import {
+  Ubuntu_400Regular,
+  Ubuntu_700Bold,
+  Ubuntu_400Regular_Italic,
+} from '@expo-google-fonts/ubuntu';
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
 
 // Configure how notifications should be handled when the app is running
 Notifications.setNotificationHandler({
@@ -46,8 +77,33 @@ export default function RootLayout() {
   const colors = useThemeColors(settings.themeId);
   const isDark = colors.isDark;
 
+  const [fontsLoaded] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_700Bold,
+    Inter_400Regular_Italic,
+    PlayfairDisplay_400Regular,
+    PlayfairDisplay_700Bold,
+    PlayfairDisplay_400Regular_Italic,
+    Montserrat_400Regular,
+    Montserrat_500Medium,
+    Montserrat_700Bold,
+    Outfit_400Regular,
+    Outfit_500Medium,
+    Outfit_700Bold,
+    Ubuntu_400Regular,
+    Ubuntu_700Bold,
+    Ubuntu_400Regular_Italic,
+  });
+
   const [activeReminder, setActiveReminder] = React.useState<Reminder | null>(null);
   const [alertVisible, setAlertVisible] = React.useState(false);
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
 
   useEffect(() => {
     // Register background tasks
@@ -89,6 +145,10 @@ export default function RootLayout() {
       sub.remove();
     };
   }, []);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <GestureHandlerRootView style={styles.root}>

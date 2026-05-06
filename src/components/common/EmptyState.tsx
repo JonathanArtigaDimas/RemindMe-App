@@ -12,12 +12,13 @@ interface EmptyStateProps {
 export function EmptyState({ emoji = '📭', title, subtitle }: EmptyStateProps) {
   const { settings } = useSettingsStore();
   const colors = useThemeColors(settings.themeId);
+  const fontStyle = { fontFamily: TYPOGRAPHY.getFontFamily(settings.fontFamily) };
   return (
     <View style={styles.container}>
       <Text style={styles.emoji}>{emoji}</Text>
-      <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+      <Text style={[styles.title, { color: colors.text }, fontStyle]}>{title}</Text>
       {subtitle && (
-        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>{subtitle}</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }, fontStyle]}>{subtitle}</Text>
       )}
     </View>
   );

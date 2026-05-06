@@ -9,6 +9,7 @@ interface SettingsState {
   settings: UserSettings;
   setTheme: (theme: UserSettings['theme']) => void;
   setThemeId: (themeId: UserSettings['themeId']) => void;
+  setFontFamily: (fontFamily: UserSettings['fontFamily']) => void;
   setHapticFeedback: (enabled: boolean) => void;
   setShowCompleted: (show: boolean) => void;
   setDefaultCategory: (categoryId: string) => void;
@@ -18,6 +19,7 @@ interface SettingsState {
 const DEFAULT_SETTINGS: UserSettings = {
   theme: 'system',
   themeId: 'onyx',
+  fontFamily: 'system',
   hapticFeedback: true,
   showCompletedReminders: true,
   defaultSoundId: BUILT_IN_SOUNDS[0].id,
@@ -34,6 +36,8 @@ export const useSettingsStore = create<SettingsState>()(
         set((state) => ({ settings: { ...state.settings, theme } })),
       setThemeId: (themeId) =>
         set((state) => ({ settings: { ...state.settings, themeId } })),
+      setFontFamily: (fontFamily) =>
+        set((state) => ({ settings: { ...state.settings, fontFamily } })),
       setHapticFeedback: (hapticFeedback) =>
         set((state) => ({ settings: { ...state.settings, hapticFeedback } })),
       setShowCompleted: (showCompletedReminders) =>

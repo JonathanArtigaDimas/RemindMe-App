@@ -1,4 +1,4 @@
-import { ThemeID, ReminderCategory } from '../types';
+import { ThemeID, ReminderCategory, FontFamily } from '../types';
 
 export interface ThemeColors {
   primary: string;
@@ -204,10 +204,20 @@ export const RADIUS = {
   full: 999,
 };
 
+export const FONTS: Record<FontFamily, { regular: string; bold: string; medium?: string; italic?: string }> = {
+  system: { regular: 'System', bold: 'System', medium: 'System', italic: 'System' },
+  inter: { regular: 'Inter_400Regular', medium: 'Inter_500Medium', bold: 'Inter_700Bold', italic: 'Inter_400Regular_Italic' },
+  playfair: { regular: 'PlayfairDisplay_400Regular', bold: 'PlayfairDisplay_700Bold', italic: 'PlayfairDisplay_400Regular_Italic' },
+  montserrat: { regular: 'Montserrat_400Regular', bold: 'Montserrat_700Bold', medium: 'Montserrat_500Medium' },
+  outfit: { regular: 'Outfit_400Regular', bold: 'Outfit_700Bold', medium: 'Outfit_500Medium' },
+  ubuntu: { regular: 'Ubuntu_400Regular', bold: 'Ubuntu_700Bold', italic: 'Ubuntu_400Regular_Italic' },
+};
+
 export const TYPOGRAPHY = {
   sizes: {
     xs: 12,
     sm: 14,
+    md: 15,
     base: 16,
     lg: 18,
     xl: 20,
@@ -220,7 +230,11 @@ export const TYPOGRAPHY = {
     semibold: '600' as const,
     bold: '700' as const,
     extrabold: '800' as const,
-  }
+  },
+  getFontFamily: (family: FontFamily = 'system', weight: 'regular' | 'medium' | 'bold' | 'italic' = 'regular') => {
+    const config = FONTS[family] || FONTS.system;
+    return config[weight] || config.regular;
+  },
 };
 
 export const COLORS = {

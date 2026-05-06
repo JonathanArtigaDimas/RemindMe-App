@@ -50,15 +50,15 @@ export function Button({
 
   const bgColor =
     variant === 'primary'
-      ? COLORS.primary
+      ? colors.primary
       : variant === 'secondary'
-      ? COLORS.success
+      ? colors.success
       : variant === 'danger'
-      ? COLORS.error
+      ? colors.error
       : 'transparent';
 
   const textColor =
-    variant === 'ghost' ? COLORS.primary : COLORS.white;
+    variant === 'ghost' ? colors.primary : '#FFF';
 
   const height = size === 'sm' ? 36 : size === 'lg' ? 56 : 46;
   const fontSize =
@@ -72,7 +72,7 @@ export function Button({
       style={[
         styles.base,
         { backgroundColor: bgColor, height, borderRadius: RADIUS.md },
-        variant === 'ghost' && { borderWidth: 1.5, borderColor: COLORS.primary },
+        variant === 'ghost' && { borderWidth: 1.5, borderColor: colors.primary },
         fullWidth && { width: '100%' },
         (disabled || loading) && { opacity: 0.5 },
         style,
@@ -83,7 +83,7 @@ export function Button({
       ) : (
         <View style={styles.row}>
           {icon && <View style={styles.iconWrap}>{icon}</View>}
-          <Text style={[styles.text, { color: textColor, fontSize }, textStyle]}>
+          <Text style={[styles.text, { color: textColor, fontSize, fontFamily: TYPOGRAPHY.getFontFamily(settings.fontFamily) }, textStyle]}>
             {label}
           </Text>
         </View>

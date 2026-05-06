@@ -62,18 +62,27 @@ export default function HomeScreen() {
 
   const allEmpty = todayItems.length === 0 && upcomingItems.length === 0;
 
+  const fontStyle = { fontFamily: TYPOGRAPHY.getFontFamily(settings.fontFamily) };
+  const fontBold = { fontFamily: TYPOGRAPHY.getFontFamily(settings.fontFamily, 'bold') };
+
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={[styles.greeting, { color: colors.textSecondary }]}>
-            {new Date().getHours() < 12 ? '☀️ Buenos días Amor ❤️' : new Date().getHours() < 18 ? '🌤️ Buenas tardes Amor ❤️' : '🌙 Buenas noches Amor ❤️'}
-          </Text>
-          <Text style={[styles.title, { color: colors.text }]}>Mis Recordatorios</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={[styles.greeting, { color: colors.textSecondary, marginRight: 4 }]}>
+              {new Date().getHours() < 12 ? '☀️' : new Date().getHours() < 18 ? '🌤️' : '🌙'}
+            </Text>
+            <Text style={[styles.greeting, { color: colors.textSecondary }, fontStyle]}>
+              {new Date().getHours() < 12 ? 'Buenos días Amor' : new Date().getHours() < 18 ? 'Buenas tardes Amor' : 'Buenas noches Amor'}
+            </Text>
+            <Text style={[styles.greeting, { color: colors.textSecondary }]}> ❤️</Text>
+          </View>
+          <Text style={[styles.title, { color: colors.text }, fontBold]}>Mis Recordatorios</Text>
         </View>
         <View style={[styles.headerBadge, { backgroundColor: colors.primary }]}>
-          <Text style={styles.headerBadgeText}>{reminders.length}</Text>
+          <Text style={[styles.headerBadgeText, fontBold]}>{reminders.length}</Text>
         </View>
       </View>
 
@@ -92,9 +101,14 @@ export default function HomeScreen() {
           showsVerticalScrollIndicator={false}
           renderItem={({ item: section }) => (
             <View>
-              <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
-                {section.title}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm }}>
+                <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginBottom: 0, marginRight: 8 }]}>
+                  {section.title.split(' ')[0]}
+                </Text>
+                <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginBottom: 0 }, fontStyle]}>
+                  {section.title.substring(section.title.indexOf(' ') + 1)}
+                </Text>
+              </View>
               {section.data.map((reminder) => (
                 <ReminderCard
                   key={reminder.id}

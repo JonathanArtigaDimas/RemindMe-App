@@ -18,6 +18,7 @@ export function ReminderCard({ reminder, onPress, onComplete, onDelete }: Remind
   const { settings } = useSettingsStore();
   const colors = useThemeColors(settings.themeId);
   const catInfo = CATEGORY_INFO.find((c) => c.id === reminder.category);
+  const fontStyle = { fontFamily: TYPOGRAPHY.getFontFamily(settings.fontFamily) };
 
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.85}>
@@ -49,7 +50,7 @@ export function ReminderCard({ reminder, onPress, onComplete, onDelete }: Remind
               <Ionicons name="checkmark" size={14} color="#fff" />
             )}
           </TouchableOpacity>
-
+ 
           {/* Content */}
           <View style={styles.content}>
             <Text
@@ -57,27 +58,38 @@ export function ReminderCard({ reminder, onPress, onComplete, onDelete }: Remind
                 styles.title,
                 { color: colors.textOnSurface },
                 reminder.isCompleted && styles.strikethrough,
+                fontStyle
               ]}
               numberOfLines={1}
             >
               {reminder.title}
             </Text>
             {reminder.description ? (
-              <Text style={[styles.desc, { color: colors.textSecondary }]} numberOfLines={1}>
+              <Text style={[styles.desc, { color: colors.textSecondary }, fontStyle]} numberOfLines={1}>
                 {reminder.description}
               </Text>
             ) : null}
             <View style={styles.meta}>
               <View style={[styles.categoryDot, { backgroundColor: catInfo?.color || reminder.color }]} />
-              <Text style={[styles.metaText, { color: colors.textSecondary }]}>
-                {catInfo?.emoji} {catInfo?.label}
-              </Text>
-              <Text style={[styles.metaText, { color: colors.textOnSurface }]}>
-                {'  '}🕐 {formatTime(reminder.datetime)}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={[styles.metaText, { color: colors.textSecondary, marginRight: 4 }]}>
+                  {catInfo?.emoji}
+                </Text>
+                <Text style={[styles.metaText, { color: colors.textSecondary }, fontStyle]}>
+                  {catInfo?.label}
+                </Text>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={[styles.metaText, { color: colors.textOnSurface, marginRight: 4 }]}>
+                  {'  '}🕐
+                </Text>
+                <Text style={[styles.metaText, { color: colors.textOnSurface }, fontStyle]}>
+                  {formatTime(reminder.datetime)}
+                </Text>
+              </View>
             </View>
           </View>
-
+ 
           {/* Delete button */}
           <TouchableOpacity onPress={onDelete} style={styles.deleteBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
             <Ionicons name="trash-outline" size={18} color={COLORS.error} />

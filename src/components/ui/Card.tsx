@@ -47,14 +47,15 @@ export function Card({ children, style, onPress, accentColor, noPadding }: CardP
 interface SectionHeaderProps {
   title: string;
   right?: React.ReactNode;
+  fontStyle?: any;
 }
 
-export function SectionHeader({ title, right }: SectionHeaderProps) {
+export function SectionHeader({ title, right, fontStyle }: SectionHeaderProps) {
   const { settings } = useSettingsStore();
   const colors = useThemeColors(settings.themeId);
   return (
     <View style={styles.sectionRow}>
-      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{title}</Text>
+      <Text style={[styles.sectionTitle, { color: colors.textSecondary }, fontStyle]}>{title}</Text>
       {right}
     </View>
   );
