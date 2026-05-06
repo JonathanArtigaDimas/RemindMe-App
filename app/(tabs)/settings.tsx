@@ -1,24 +1,24 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Switch,
-  TouchableOpacity,
   Alert,
   Dimensions,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
   ToastAndroid,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { SPACING, RADIUS, useThemeColors, THEMES, FONTS, TYPOGRAPHY } from '../../src/theme';
-import { useSettingsStore } from '../../src/store/settingsStore';
-import { useReminderStore } from '../../src/store/reminderStore';
 import { Card, SectionHeader } from '../../src/components/ui/Card';
-import { ThemeID, FontFamily } from '../../src/types';
-import { useRouter } from 'expo-router';
 import { notificationService } from '../../src/services/notificationService';
+import { useReminderStore } from '../../src/store/reminderStore';
+import { useSettingsStore } from '../../src/store/settingsStore';
+import { RADIUS, SPACING, THEMES, TYPOGRAPHY, useThemeColors } from '../../src/theme';
+import { FontFamily, ThemeID } from '../../src/types';
 
 const FONT_OPTIONS: { id: FontFamily; name: string; preview: string }[] = [
   { id: 'system', name: 'Sistema', preview: 'Default Sans' },
@@ -46,9 +46,9 @@ const THEME_OPTIONS: { id: ThemeID; name: string; icon: string; description: str
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const { 
-    settings, setThemeId, setHapticFeedback, 
-    setShowCompleted, resetSettings, setFontFamily 
+  const {
+    settings, setThemeId, setHapticFeedback,
+    setShowCompleted, resetSettings, setFontFamily
   } = useSettingsStore();
   const { clearCompleted, reminders } = useReminderStore();
   const colors = useThemeColors(settings.themeId);
@@ -75,21 +75,21 @@ export default function SettingsScreen() {
 
       <ScrollView contentContainerStyle={styles.content}>
         <SectionHeader title="Temas Premium" fontStyle={fontBold} />
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.themesContainer}
         >
           {THEME_OPTIONS.map((theme) => {
             const themeColors = THEMES[theme.id];
             const isSelected = settings.themeId === theme.id;
-            
+
             return (
               <TouchableOpacity
                 key={theme.id}
                 style={[
                   styles.themeCard,
-                  { 
+                  {
                     backgroundColor: themeColors.surface,
                     borderColor: isSelected ? themeColors.primary : themeColors.border,
                     borderWidth: isSelected ? 2 : 1
@@ -113,22 +113,22 @@ export default function SettingsScreen() {
         </ScrollView>
 
         <SectionHeader title="Tipografía Premium" fontStyle={fontBold} />
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.themesContainer}
         >
           {FONT_OPTIONS.map((font) => {
             const isSelected = settings.fontFamily === font.id;
             const fontName = TYPOGRAPHY.getFontFamily(font.id);
             const fontBoldLocal = TYPOGRAPHY.getFontFamily(font.id, 'bold');
-            
+
             return (
               <TouchableOpacity
                 key={font.id}
                 style={[
                   styles.themeCard,
-                  { 
+                  {
                     backgroundColor: colors.surface,
                     borderColor: isSelected ? colors.primary : colors.border,
                     borderWidth: isSelected ? 2 : 1,
@@ -185,8 +185,8 @@ export default function SettingsScreen() {
             );
           })}
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
-          <TouchableOpacity 
-            style={styles.listItem} 
+          <TouchableOpacity
+            style={styles.listItem}
             onPress={() => router.push('/sounds')}
           >
             <View style={styles.itemLeft}>
@@ -242,7 +242,8 @@ export default function SettingsScreen() {
         </Card>
 
         <View style={styles.footer}>
-          <Text style={[styles.version, { color: colors.textSecondary }, fontStyle]}>RemindMe Premium v1.0.34</Text>
+          <Text style={[styles.version, { color: colors.textSecondary }, fontStyle]}>RemindMe v1.0.3</Text>
+          <Text style={[styles.version, { color: colors.textSecondary, fontWeight: 'bold', fontSize: 13 }]}>Lic. Mylene Dánae Castro de Artiga ♥️</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

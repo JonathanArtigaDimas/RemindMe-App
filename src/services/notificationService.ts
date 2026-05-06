@@ -44,11 +44,11 @@ class NotificationService {
     if (!Notifications) return;
 
     try {
-      // Usamos un nuevo ID de canal para forzar que Samsung aplique los cambios de Banner (Heads-up)
-      await Notifications.setNotificationChannelAsync('reminder-urgent-v2', {
+      // Usamos un nuevo ID de canal (v3) para forzar la actualización de la vibración intensa
+      await Notifications.setNotificationChannelAsync('reminder-urgent-v3', {
         name: '⏰ Avisos Urgentes',
         importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 500, 200, 500],
+        vibrationPattern: [0, 800, 400, 800, 400, 800, 400, 800], // 4 pulsos largos
         enableVibration: true,
         showBadge: true,
         lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
@@ -80,14 +80,14 @@ class NotificationService {
           body: reminder.description || 'Toca para abrir RemindMe',
           priority: Notifications.AndroidNotificationPriority.MAX,
           sound: true,
-          vibrate: [0, 500, 200, 500],
+          vibrate: [0, 800, 400, 800, 400, 800, 400, 800],
           categoryIdentifier: 'reminder-actions',
           data: { reminderId: reminder.id },
         },
         trigger: {
           type: 'date',
           date: targetTime,
-          channelId: 'reminder-urgent-v2',
+          channelId: 'reminder-urgent-v3',
         } as any,
       });
 
@@ -221,7 +221,7 @@ class NotificationService {
         },
         trigger: {
           seconds: 15,
-          channelId: 'reminder-urgent-v2',
+          channelId: 'reminder-urgent-v3',
         },
       });
       if (Platform.OS === 'android') {
